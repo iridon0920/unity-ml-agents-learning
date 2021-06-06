@@ -18,15 +18,15 @@ public class RollerAgent : Agent
     public override void OnEpisodeBegin()
     {
         // Roller Agent落下時
-        if (this.transform.position.y < 0)
+        if (this.transform.localPosition.y < 0)
         {
             this._rBody.angularVelocity = Vector3.zero;
             this._rBody.velocity = Vector3.zero;
-            this.transform.position = new Vector3(0.0f, 0.5f, 0.0f);
+            this.transform.localPosition = new Vector3(0.0f, 0.5f, 0.0f);
         }
 
         // ターゲット位置リセット
-        target.position = new Vector3(
+        target.localPosition = new Vector3(
             Random.value * 8 - 4, 0.5f, Random.value * 8 - 4
         );
     }
@@ -52,7 +52,7 @@ public class RollerAgent : Agent
         _rBody.AddForce(controlSignal * 10);
 
         float distanceToTarget = Vector3.Distance(
-            this.transform.position, target.position
+            this.transform.localPosition, target.localPosition
         );
         // targetとの距離が一定以内であれば報酬獲得
         if (distanceToTarget < 1.42f)
@@ -62,7 +62,7 @@ public class RollerAgent : Agent
         }
 
         // Roller Agent落下時は報酬無しでエピソード終了
-        if (this.transform.position.y < 0)
+        if (this.transform.localPosition.y < 0)
         {
             EndEpisode();
         }

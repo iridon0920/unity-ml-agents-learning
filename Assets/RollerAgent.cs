@@ -34,13 +34,19 @@ public class RollerAgent : Agent
     // 行動実行時に呼ばれる
     public override void OnActionReceived(ActionBuffers actions)
     {
-        ActionSegment<float> vectorAction = actions.ContinuousActions;
+        ActionSegment<int> vectorAction = actions.DiscreteActions;
 
         // 行動（vectorAction）の内容に応じて、rBody経由でRollerAgentへ力を加える
-        Vector3 controlSignal = Vector3.zero;
-        controlSignal.x = vectorAction[0];
-        controlSignal.z = vectorAction[1];
-        _rBody.AddForce(controlSignal * 10);
+        Vector3 dirToGo = Vector3.zero;
+        Vector3 rotateDir = Vector3.zero;
+        int action = vectorAction[0];
+        if (action == 1) dirToGo = transform.forward;
+        if (action == 2) dirToGo = transform.forward * -1.0f;
+        if (action == 3) rotateDir = transform.up * -1.0f;
+        if (action == 4) rotateDir = transform.up;
+
+        this.transform.Rotate(rotateDir, Time.deltaTime * 200f);
+        _rBody.AddForce(dirToGo * 0.4f, ForceMode.VelocityChange);
 
         float distanceToTarget = Vector3.Distance(
             this.transform.localPosition, target.localPosition
@@ -64,7 +70,10 @@ public class RollerAgent : Agent
     {
         ActionSegment<float> actionsOut = actionBuffers.ContinuousActions;
 
-        actionsOut[0] = Input.GetAxis("Horizontal");
-        actionsOut[1] = Input.GetAxis("Vertical");
+        actionsOut[0] = 0;
+        if (Input.GetKey(KeyCode.UpArrow)) actionsOut[0] = 1;
+        if (Input.GetKey(KeyCode.DownArrow)) actionsOut[0] = 2;
+        if (Input.GetKey(KeyCode.LeftArrow)) actionsOut[0] = 3;
+        if (Input.GetKey(KeyCode.RightArrow)) actionsOut[0] = 4;
     }
 }

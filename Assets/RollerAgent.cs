@@ -31,28 +31,15 @@ public class RollerAgent : Agent
         );
     }
 
-    // 観察取得時に呼ばれる
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        sensor.AddObservation(target.localPosition);
-        sensor.AddObservation(this.transform.localPosition);
-        sensor.AddObservation(_rBody.velocity.x);
-        sensor.AddObservation(_rBody.velocity.z);
-    }
-
     // 行動実行時に呼ばれる
     public override void OnActionReceived(ActionBuffers actions)
     {
-        ActionSegment<int> vectorAction = actions.DiscreteActions;
+        ActionSegment<float> vectorAction = actions.ContinuousActions;
 
         // 行動（vectorAction）の内容に応じて、rBody経由でRollerAgentへ力を加える
         Vector3 controlSignal = Vector3.zero;
-        int action = vectorAction[0];
-        if (action == 1) controlSignal.z = 1.0f;
-        if (action == 2) controlSignal.z = -1.0f;
-        if (action == 3) controlSignal.x = -1.0f;
-        if (action == 4) controlSignal.x = 1.0f;
-
+        controlSignal.x = vectorAction[0];
+        controlSignal.z = vectorAction[1];
         _rBody.AddForce(controlSignal * 10);
 
         float distanceToTarget = Vector3.Distance(
@@ -77,10 +64,7 @@ public class RollerAgent : Agent
     {
         ActionSegment<float> actionsOut = actionBuffers.ContinuousActions;
 
-        actionsOut[0] = 0;
-        if (Input.GetKey(KeyCode.UpArrow)) actionsOut[0] = 1;
-        if (Input.GetKey(KeyCode.DownArrow)) actionsOut[0] = 2;
-        if (Input.GetKey(KeyCode.LeftArrow)) actionsOut[0] = 3;
-        if (Input.GetKey(KeyCode.RightArrow)) actionsOut[0] = 4;
+        actionsOut[0] = Input.GetAxis("Horizontal");
+        actionsOut[1] = Input.GetAxis("Vertical");
     }
 }

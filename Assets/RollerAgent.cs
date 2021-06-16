@@ -41,8 +41,8 @@ public class RollerAgent : Agent
         Vector3 rotateDir = Vector3.zero;
         int action = vectorAction[0];
         if (action == 1) dirToGo = transform.forward;
-        if (action == 2) dirToGo = transform.forward * -1.0f;
         if (action == 3) rotateDir = transform.up * -1.0f;
+        if (action == 2) dirToGo = transform.forward * -1.0f;
         if (action == 4) rotateDir = transform.up;
 
         this.transform.Rotate(rotateDir, Time.deltaTime * 200f);

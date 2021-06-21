@@ -54,7 +54,9 @@ public class RaycastAgent : Agent
         if (action == 4) rotateDir = transform.up;
 
         this.transform.Rotate(rotateDir, Time.deltaTime * 200f);
-        _rBody.AddForce(dirToGo * 0.4f, ForceMode.VelocityChange);
+
+        Vector3 targetPosition = _rBody.position +  dirToGo * 0.1f;
+        _rBody.position = targetPosition;
 
        // ステップごとの報酬
        AddReward(-0.001f);
